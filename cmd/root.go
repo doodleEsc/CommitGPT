@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 
 	"github.com/spf13/cobra"
@@ -16,17 +17,15 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "CommitGPT",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Use:   "commitgpt",
+	Short: "Manage Commit Message By LLM",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// 检查 git 命令
+		if _, err := exec.LookPath("git"); err != nil {
+			return fmt.Errorf("git command not found, please install git first")
+		}
+		return nil
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

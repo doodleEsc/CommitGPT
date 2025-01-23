@@ -4,17 +4,34 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/doodleEsc/CommitGPT/git"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+var (
+	diffUnified int
+	commitAmend bool
+	excludeList []string
 )
 
 // commitCmd represents the commit command
 var commitCmd = &cobra.Command{
 	Use:   "commit",
 	Short: "Generate Commit Message By LLM",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("commit called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		g := git.New(
+			git.WithDiffUnified(viper.GetInt("git.diff_unified")),
+			git.WithExcludeList(viper.GetStringSlice("git.exclude_list")),
+			git.WithEnableAmend(commitAmend),
+		)
+
+		diff, err := g.DiffFiles()
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 
@@ -30,4 +47,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// commitCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	commitCmd.Flags().IntVar(&diffUnified, "diff_unified", 3, "show <n> lines of diff context")
+	commitCmd.Flags().BoolVar(&commitAmend, "amend", false, "amend previous commit")
+	commitCmd.Flags().StringSliceVar(&excludeList, "exclude_list", []string{}, "exclude file from git diff command")
 }
