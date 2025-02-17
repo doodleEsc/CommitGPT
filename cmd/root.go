@@ -65,12 +65,14 @@ func initConfig() {
 		if err := os.MkdirAll(cfgDir, os.ModePerm); err != nil {
 			cobra.CheckErr(err)
 		}
-		cfgFile = path.Join(cfgDir, "commitgpt.yaml")
 
 		// Search config in home directory with name ".CommitGPT" (without extension).
 		viper.AddConfigPath(cfgDir)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("commitgpt")
+
+		cfgFile = path.Join(cfgDir, "commitgpt.yaml")
+		fmt.Println(cfgFile)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

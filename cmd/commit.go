@@ -4,7 +4,10 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/doodleEsc/CommitGPT/git"
+	"github.com/doodleEsc/CommitGPT/provider"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -30,6 +33,18 @@ var commitCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		provider, err := provider.NewProvider("openai")
+		if err != nil {
+			return err
+		}
+
+		response, err := provider.Completion(cmd.Context(), diff)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(response.Content)
 
 		return nil
 	},
