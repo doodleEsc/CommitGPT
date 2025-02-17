@@ -32,7 +32,7 @@ func NewProvider(config types.Config) (Generative, error) {
 	switch config.Type {
 	case types.OpenAIProvider:
 		return openai.NewProvider(config)
-		// return openai.NewProvider(config)
+	// return openai.NewProvider(config)
 	// case AnthropicProvider:
 	// 	return anthropic.NewProvider(config)
 	// case GeminiProvider:

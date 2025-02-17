@@ -7,13 +7,12 @@ import (
 )
 
 type Provider struct {
-	client *Client
+	// client *Client
 	config types.Config
 }
 
 func NewProvider(config types.Config) (*Provider, error) {
 	// TODO: finish me
-	return &Provider{}, nil
 }
 
 func (p *Provider) Completion(ctx context.Context, content string) (*types.Response, error) {
