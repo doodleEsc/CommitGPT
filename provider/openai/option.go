@@ -1,16 +1,17 @@
+// Package openai
 package openai
 
 type Option func(*Client)
 
-func WithBaseUrl(baseUrl string) Option {
+func WithBaseURL(baseURL string) Option {
 	return func(client *Client) {
-		client.BaseUrl = baseUrl
+		client.BaseURL = baseURL
 	}
 }
 
-func WithApiKey(apiKey string) Option {
+func WithAPIKey(apiKey string) Option {
 	return func(client *Client) {
-		client.ApiKey = apiKey
+		client.APIKey = apiKey
 	}
 }
 

@@ -1,3 +1,4 @@
+// Package provider
 package provider
 
 import (
@@ -31,8 +32,8 @@ func NewProvider(providerType types.ProviderType) (LLMProvider, error) {
 
 func newOpenAIClient() (LLMProvider, error) {
 	return openai.New(
-		openai.WithBaseUrl(viper.GetString("openai.base_url")),
-		openai.WithApiKey(viper.GetString("openai.api_key")),
+		openai.WithBaseURL(viper.GetString("openai.base_url")),
+		openai.WithAPIKey(viper.GetString("openai.api_key")),
 		openai.WithModel(viper.GetString("openai.model")),
 		openai.WithTemperature(float32(viper.GetFloat64("openai.temperature"))),
 	)

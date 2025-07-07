@@ -1,3 +1,4 @@
+// Package types
 package types
 
 // ProviderType represents the type of AI provider

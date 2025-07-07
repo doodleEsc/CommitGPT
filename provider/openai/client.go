@@ -1,3 +1,4 @@
+// Package openai
 package openai
 
 import (
@@ -8,22 +9,22 @@ import (
 )
 
 const (
-	defaultBaseUrl    = "https://api.openai.com/v1"
+	defaultBaseURL    = "https://api.openai.com/v1"
 	defaultModel      = openai.GPT3Dot5Turbo
 	defaultTemprature = 0.8
 )
 
 type Client struct {
-	BaseUrl     string
-	ApiKey      string
+	BaseURL     string
+	APIKey      string
 	Model       string
 	Temperature float32
 }
 
 func New(opts ...Option) (*Client, error) {
 	client := &Client{
-		BaseUrl:     defaultBaseUrl,
-		ApiKey:      "",
+		BaseURL:     defaultBaseURL,
+		APIKey:      "",
 		Model:       defaultModel,
 		Temperature: defaultTemprature,
 	}
@@ -36,8 +37,8 @@ func New(opts ...Option) (*Client, error) {
 }
 
 func (c *Client) Completion(ctx context.Context, content string) (*types.Response, error) {
-	config := openai.DefaultConfig(c.ApiKey)
-	config.BaseURL = c.BaseUrl
+	config := openai.DefaultConfig(c.APIKey)
+	config.BaseURL = c.BaseURL
 
 	client := openai.NewClientWithConfig(config)
 
@@ -62,10 +63,10 @@ func (c *Client) Completion(ctx context.Context, content string) (*types.Respons
 		return nil, err
 	}
 
-	resp_content := resp.Choices[0].Message.Content
+	respContent := resp.Choices[0].Message.Content
 
 	response := &types.Response{
-		Content: resp_content,
+		Content: respContent,
 		Usage: types.Usage{
 			PromptTokens:     resp.Usage.PromptTokens,
 			CompletionTokens: resp.Usage.CompletionTokens,

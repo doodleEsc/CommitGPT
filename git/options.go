@@ -1,3 +1,4 @@
+// Package git
 package git
 
 // Option is an interface that specifies instrumentation configuration options.
