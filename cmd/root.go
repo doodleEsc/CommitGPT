@@ -9,6 +9,8 @@ import (
 	"os/exec"
 	"path"
 
+	"github.com/doodleEsc/CommitGPT/git"
+	"github.com/doodleEsc/CommitGPT/provider/openai"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -72,7 +74,6 @@ func initConfig() {
 		viper.SetConfigName("commitgpt")
 
 		cfgFile = path.Join(cfgDir, "commitgpt.yaml")
-		fmt.Println(cfgFile)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -88,10 +89,32 @@ func initConfig() {
 
 			// Write default config
 			defaultConfig := []byte("# CommitGPT default configuration\n")
+
+			openaiDefaultConfig, err := openai.GetDefaultConfigAsYAML()
+			if err != nil {
+				cobra.CheckErr(err)
+			}
+
+			gitDefaultConfig, err := git.GetDefaultConfigAsYAML()
+			if err != nil {
+				cobra.CheckErr(err)
+			}
+
+			commitDefaultConfig, err := GetDefaultCommitConfigAsYAML()
+			if err != nil {
+				cobra.CheckErr(err)
+			}
+
+			defaultConfig = append(defaultConfig, commitDefaultConfig...)
+			defaultConfig = append(defaultConfig, openaiDefaultConfig...)
+			defaultConfig = append(defaultConfig, gitDefaultConfig...)
+
 			if err := os.WriteFile(cfgFile, defaultConfig, 0644); err != nil {
 				cobra.CheckErr(err)
 			}
 			fmt.Fprintln(os.Stderr, "Created default config file:", cfgFile)
+			fmt.Fprintln(os.Stderr, "Please fill in the configuration in the config file and rerun the program.")
+			os.Exit(1)
 		} else {
 			// Config file was found but another error was produced
 			cobra.CheckErr(err)

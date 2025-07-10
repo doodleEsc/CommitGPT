@@ -5,14 +5,16 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/doodleEsc/CommitGPT/provider/message"
 	"github.com/doodleEsc/CommitGPT/provider/openai"
 	"github.com/doodleEsc/CommitGPT/provider/types"
+
 	"github.com/spf13/viper"
 )
 
 // LLMProvider defines an interface for generative AI operations.
 type LLMProvider interface {
-	Completion(ctx context.Context, content string) (*types.Response, error)
+	Completion(ctx context.Context, messages []message.Message) (*types.Response, error)
 }
 
 // NewProvider creates a new instance of Generative based on the provided configuration

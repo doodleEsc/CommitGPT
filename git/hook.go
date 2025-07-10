@@ -10,7 +10,6 @@ var files embed.FS
 
 const (
 	HookPrepareCommitMessageTemplate = "prepare-commit-msg"
-	CommitMessageTemplate            = "commit-msg.tmpl"
 )
 
 func GetHookFileContent(filename string) ([]byte, error) {

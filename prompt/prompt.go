@@ -12,8 +12,8 @@ var templatesFS embed.FS
 
 // Template file names
 const (
-	SystemTemplate = "system.toml"
-	CommitTemplate = "commit.toml"
+	SystemTemplate = "system.tmpl"
+	CommitTemplate = "commit.tmpl"
 )
 
 // Initializes the prompt package by loading the templates from the embedded file system.

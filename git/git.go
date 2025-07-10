@@ -201,7 +201,49 @@ func (c *Command) GitDir() (string, error) {
 	return string(output), nil
 }
 
-// Diff compares the differences between two sets of data.
+func (c *Command) userName() *exec.Cmd {
+	args := []string{
+		"config",
+		"user.name",
+	}
+
+	return exec.Command(
+		"git",
+		args...,
+	)
+}
+
+func (c *Command) UserName() (string, error) {
+	output, err := c.userName().Output()
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(output)), nil
+}
+
+func (c *Command) userEmail() *exec.Cmd {
+	args := []string{
+		"config",
+		"user.email",
+	}
+
+	return exec.Command(
+		"git",
+		args...,
+	)
+}
+
+func (c *Command) UserEmail() (string, error) {
+	output, err := c.userEmail().Output()
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(output)), nil
+}
+
+// DiffFiles compares the differences between two sets of data.
 // It returns a string representing the differences and an error.
 // If there are no differences, it returns an empty string and an error.
 func (c *Command) DiffFiles() (string, error) {
@@ -255,21 +297,17 @@ func (c *Command) UninstallHook() error {
 }
 
 func New(opts ...Option) *Command {
-	// Instantiate a new config object with default values
-	cfg := &config{}
-
-	// Loop through each option passed as argument and apply it to the config object
-	for _, o := range opts {
-		o.apply(cfg)
-	}
-
-	// Instantiate a new Command object with the configurations from the config object
 	cmd := &Command{
-		diffUnified: cfg.diffUnified,
-		// Append the user-defined excludeList to the default excludeFromDiff
-		excludeList: append(excludeFromDiff, cfg.excludeList...),
-		isAmend:     cfg.isAmend,
+		diffUnified: defaultDiffUnified,
+		isAmend:     defaultIsAmend,
+		excludeList: []string{},
 	}
+
+	for _, o := range opts {
+		o(cmd)
+	}
+
+	cmd.excludeList = append(excludeFromDiff, cmd.excludeList...)
 
 	return cmd
 }

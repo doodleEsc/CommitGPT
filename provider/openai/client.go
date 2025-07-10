@@ -4,14 +4,10 @@ package openai
 import (
 	"context"
 
+	"github.com/doodleEsc/CommitGPT/provider/message"
 	"github.com/doodleEsc/CommitGPT/provider/types"
-	openai "github.com/sashabaranov/go-openai"
-)
 
-const (
-	defaultBaseURL    = "https://api.openai.com/v1"
-	defaultModel      = openai.GPT3Dot5Turbo
-	defaultTemprature = 0.8
+	openai "github.com/sashabaranov/go-openai"
 )
 
 type Client struct {
@@ -19,6 +15,8 @@ type Client struct {
 	APIKey      string
 	Model       string
 	Temperature float32
+	TopP        float32
+	MaxTokens   int
 }
 
 func New(opts ...Option) (*Client, error) {
@@ -27,6 +25,8 @@ func New(opts ...Option) (*Client, error) {
 		APIKey:      "",
 		Model:       defaultModel,
 		Temperature: defaultTemprature,
+		TopP:        defaultTopP,
+		MaxTokens:   defaultMaxTokens,
 	}
 
 	for _, opt := range opts {
@@ -36,7 +36,18 @@ func New(opts ...Option) (*Client, error) {
 	return client, nil
 }
 
-func (c *Client) Completion(ctx context.Context, content string) (*types.Response, error) {
+func convertMessages(messages []message.Message) []openai.ChatCompletionMessage {
+	var result []openai.ChatCompletionMessage
+	for _, msg := range messages {
+		result = append(result, openai.ChatCompletionMessage{
+			Role:    msg.Role,
+			Content: msg.Content,
+		})
+	}
+	return result
+}
+
+func (c *Client) Completion(ctx context.Context, messages []message.Message) (*types.Response, error) {
 	config := openai.DefaultConfig(c.APIKey)
 	config.BaseURL = c.BaseURL
 
@@ -47,16 +58,7 @@ func (c *Client) Completion(ctx context.Context, content string) (*types.Respons
 		openai.ChatCompletionRequest{
 			Model:       c.Model,
 			Temperature: c.Temperature,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleSystem,
-					Content: "You are a helpful assistant.",
-				},
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: content,
-				},
-			},
+			Messages:    convertMessages(messages),
 		},
 	)
 	if err != nil {
